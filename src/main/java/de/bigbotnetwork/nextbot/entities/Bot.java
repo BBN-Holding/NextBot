@@ -28,8 +28,9 @@ public class Bot {
     private Config config;
     private List<TelegramListener> telegramListeners = new ArrayList<>();
     private ShardManager shardManager;
-    private TelegramBotsApi botsApi = new TelegramBotsApi();
+    private TelegramBotsApi botsApi;
     private DefaultShardManagerBuilder builder = new DefaultShardManagerBuilder();
+    private TelegramBot telegramBot;
 
     public Bot(Config config) {
         this.config = config;
@@ -42,8 +43,10 @@ public class Bot {
         builder.setToken(config.getDiscordToken());
         // Configure Telegram Bot
         ApiContextInitializer.init();
+        botsApi = new TelegramBotsApi();
+        telegramBot = new TelegramBot(this);
         try {
-            botsApi.registerBot(new TelegramBot(this));
+            botsApi.registerBot(telegramBot);
             this.shardManager = builder.build();
         } catch (TelegramApiException | LoginException e) {
             e.printStackTrace();
@@ -72,6 +75,10 @@ public class Bot {
 
     public List<TelegramListener> getTelegramListeners() {
         return telegramListeners;
+    }
+
+    public TelegramBot getTelegramBot() {
+        return telegramBot;
     }
 
     public HashMap<String, Command> getCommands() {
