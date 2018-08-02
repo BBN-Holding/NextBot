@@ -5,6 +5,9 @@ import de.bigbotnetwork.nextbot.entities.commands.Command;
 import de.bigbotnetwork.nextbot.entities.commands.Executor;
 import net.dv8tion.jda.core.EmbedBuilder;
 
+import java.util.Arrays;
+import java.util.Collection;
+
 import static de.bigbotnetwork.nextbot.util.Messages.sendMessage;
 
 public class HelpCommand implements Command {
@@ -19,10 +22,10 @@ public class HelpCommand implements Command {
     public void onCommand(String[] args, Executor executor) {
 
         StringBuilder commands = new StringBuilder();
-        for (String key: bot.getCommands().keySet()) {
-            commands.append(key);
+        for (Command command: bot.getCommands()) {
+            commands.append(Arrays.toString(command.labels()));
             commands.append(" - ");
-            commands.append(bot.getCommands().get(key).description());
+            commands.append(command.description());
             commands.append("\n");
         }
 
@@ -32,5 +35,10 @@ public class HelpCommand implements Command {
     @Override
     public String description() {
         return "Gives you help about the bot";
+    }
+
+    @Override
+    public String[] labels() {
+        return new String[]{"help", "helpme"};
     }
 }

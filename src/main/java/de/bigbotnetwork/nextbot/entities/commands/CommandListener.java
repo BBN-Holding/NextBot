@@ -18,31 +18,36 @@ public class CommandListener extends ListenerAdapter implements TelegramListener
 
     @Override
     public void onUpdate(Update update) {
-        if (update.hasMessage() && update.getMessage().hasText()) {
-            handle(update.getMessage().getText(), update);
+        if (update.hasMessage() && update.getMessage().hasText() && update.getMessage().getText().startsWith("/")) {
+            handle(update.getMessage().getText().replaceFirst("/", ""), update);
         }
     }
 
     @Override
     public void onGuildMessageReceived(GuildMessageReceivedEvent event) {
-        if (!event.getAuthor().isBot()) {
-            handle(event.getMessage().getContentRaw(), event);
+        if (!event.getAuthor().isBot() && event.getMessage().getContentRaw().startsWith("next!")) {
+            handle(event.getMessage().getContentRaw().replaceFirst("next!", ""), event);
         }
     }
 
     public void handle(String message, Object event) {
-        message = message.replaceFirst("next!", "");
-        if (bot.getCommands().containsKey(message.split(" ")[0])) {
-            Command command = bot.getCommands().get(message.split(" ")[0]);
-            message = message.replaceFirst(message.split(" ")[0]+" ", "");
-            String[] args = message.split(" ");
-            Executor executor = null;
-            if (event instanceof GuildMessageReceivedEvent) {
-                executor = new Executor(Bot.Type.DISCORD, (GuildMessageReceivedEvent) event);
-            } else if (event instanceof Update) {
-                executor = new Executor(Bot.Type.TELEGRAM, (Update) event);
+        String requestedlabel = message.split(" ")[0];
+        message = message.replaceFirst(requestedlabel, "");
+        if (message.startsWith(" ")) message = message.replaceFirst(" ", "");
+        String[] args = message.split(" ");
+        for (Command command : bot.getCommands()) {
+            for (String label: command.labels()) {
+                if (label.equalsIgnoreCase(requestedlabel)) {
+                    Executor executor = null;
+                    if (event instanceof GuildMessageReceivedEvent) {
+                        executor = new Executor(Bot.Type.DISCORD, (GuildMessageReceivedEvent) event);
+                    } else if (event instanceof Update) {
+                        executor = new Executor(Bot.Type.TELEGRAM, (Update) event);
+                    }
+                    command.onCommand(args, executor);
+                    break;
+                }
             }
-            command.onCommand(args, executor);
         }
     }
 }

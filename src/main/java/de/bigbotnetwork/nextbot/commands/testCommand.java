@@ -23,4 +23,9 @@ public class testCommand implements Command {
     public String description() {
         return "A test command to test the bot :)";
     }
+
+    @Override
+    public String[] labels() {
+        return new String[]{"test", "test123"};
+    }
 }

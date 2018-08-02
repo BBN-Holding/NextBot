@@ -6,4 +6,5 @@ public interface Command {
 
     public void onCommand(String[] args, Executor executor);
     public String description();
+    public String[] labels();
 }

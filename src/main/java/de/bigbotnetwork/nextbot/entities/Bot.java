@@ -2,29 +2,21 @@ package de.bigbotnetwork.nextbot.entities;
 
 import de.bigbotnetwork.nextbot.entities.commands.Command;
 import de.bigbotnetwork.nextbot.entities.listener.TelegramListener;
-import de.bigbotnetwork.nextbot.listener.discord.test;
 import net.dv8tion.jda.bot.sharding.DefaultShardManagerBuilder;
 import net.dv8tion.jda.bot.sharding.ShardManager;
 import net.dv8tion.jda.core.entities.Game;
-import net.dv8tion.jda.core.events.ReadyEvent;
-import net.dv8tion.jda.core.hooks.ListenerAdapter;
 import org.telegram.telegrambots.ApiContextInitializer;
-import org.telegram.telegrambots.bots.TelegramLongPollingBot;
 import org.telegram.telegrambots.meta.TelegramBotsApi;
-import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 
 import javax.security.auth.login.LoginException;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.List;
 
 public class Bot {
 
-    private HashMap<String, Command> commands = new HashMap<>();
+    private ArrayList<Command> commands = new ArrayList<>();
     private Config config;
     private List<TelegramListener> telegramListeners = new ArrayList<>();
     private ShardManager shardManager;
@@ -65,6 +57,17 @@ public class Bot {
         telegramListeners.addAll(Arrays.asList(listeners));
     }
 
+    public void registerListener(Object listener) {
+        registerTelegramListener((TelegramListener) listener);
+        registerDiscordListener(listener);
+    }
+
+    public void registerListener(Object... listeners) {
+        for (Object listener : listeners) {
+            registerListener(listener);
+        }
+    }
+
     public ShardManager getShardManager() {
         return shardManager;
     }
@@ -81,7 +84,7 @@ public class Bot {
         return telegramBot;
     }
 
-    public HashMap<String, Command> getCommands() {
+    public ArrayList<Command> getCommands() {
         return commands;
     }
 
