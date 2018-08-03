@@ -18,8 +18,12 @@ public class CommandListener extends ListenerAdapter implements TelegramListener
 
     @Override
     public void onUpdate(Update update) {
-        if (update.hasMessage() && update.getMessage().hasText() && update.getMessage().getText().startsWith("/")) {
-            handle(update.getMessage().getText().replaceFirst("/", ""), update);
+        if (update.hasMessage() && update.getMessage().hasText()) {
+            if (update.getMessage().getText().startsWith("/")) {
+                handle(update.getMessage().getText().replaceFirst("/", ""), update);
+            } else if (update.getMessage().getText().startsWith("next!")) {
+                handle(update.getMessage().getText().replaceFirst("next!", ""), update);
+            }
         }
     }
 

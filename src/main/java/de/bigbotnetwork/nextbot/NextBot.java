@@ -1,5 +1,6 @@
 package de.bigbotnetwork.nextbot;
 
+import de.bigbotnetwork.nextbot.commands.BuilderCommand;
 import de.bigbotnetwork.nextbot.commands.HelpCommand;
 import de.bigbotnetwork.nextbot.commands.testCommand;
 import de.bigbotnetwork.nextbot.entities.Bot;
@@ -18,7 +19,8 @@ public class NextBot {
         bot.start();
         bot.getCommands().addAll(Arrays.asList(
                 new testCommand(bot),
-                new HelpCommand(bot)
+                new HelpCommand(bot),
+                new BuilderCommand(bot)
         ));
     }
 }
